@@ -9,8 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.28/dist/jspdf.plugin.autotable.min.js"></script>
 <!-- html2canvas para captura exacta de HTML -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!-- Biblioteca para exportar a Excel -->
-<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <!-- Chart.js para gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Íconos para botones -->
@@ -177,7 +175,8 @@
     letter-spacing: 0.5px;
   }
   
-  .meta-field input {
+  .meta-field input,
+  .meta-field select {
     width: 100%;
     padding: 12px;
     border: 2px solid #e0e0e0;
@@ -187,10 +186,15 @@
     background: white;
   }
   
-  .meta-field input:focus {
+  .meta-field input:focus,
+  .meta-field select:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  .meta-field select {
+    cursor: pointer;
   }
   
   /* Checklist Table */
@@ -445,18 +449,6 @@
     box-shadow: 0 8px 16px rgba(244, 67, 54, 0.3);
   }
   
-  .btn-excel {
-    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-  }
-  
-  .btn-excel:hover {
-    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
-  }
-  
   .btn-reset {
     background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
     color: white;
@@ -643,15 +635,35 @@
           </div>
           <div class="meta-field">
             <label>Sede</label>
-            <input type="text" id="sede" placeholder="Ingrese la sede">
+            <select id="sede">
+              <option value="">Seleccione la sede</option>
+              <option value="FOCA VIVA">FOCA VIVA</option>
+              <option value="FOCA ALKARAWI">FOCA ALKARAWI</option>
+              <option value="FOCA SEDE 2">FOCA SEDE 2</option>
+              <option value="FOCA SEDE 51B">FOCA SEDE 51B</option>
+              <option value="FOCA ALEGRA">FOCA ALEGRA</option>
+              <option value="FOCA VALLEDUPAR">FOCA VALLEDUPAR</option>
+              <option value="FOCA RIOHACHA">FOCA RIOHACHA</option>
+              <option value="FOCA SANTA MARTA">FOCA SANTA MARTA</option>
+              <option value="FOCA SANTA MARTA BURANO">FOCA SANTA MARTA BURANO</option>
+              <option value="FOCA CARTAGENA">FOCA CARTAGENA</option>
+              <option value="FOCA BARANOA">FOCA BARANOA</option>
+              <option value="FOCA GALAPA">FOCA GALAPA</option>
+              <option value="FOCA SABANALARGA 1">FOCA SABANALARGA 1</option>
+              <option value="FOCA SABANALARGA 2">FOCA SABANALARGA 2</option>
+              <option value="FOCA MALAMBO">FOCA MALAMBO</option>
+            </select>
           </div>
           <div class="meta-field">
             <label>Auditor</label>
-            <input type="text" id="auditor" placeholder="Nombre del auditor">
-          </div>
-          <div class="meta-field">
-            <label>Servicio</label>
-            <input type="text" id="servicio" placeholder="Servicio evaluado">
+            <select id="auditor">
+              <option value="">Seleccione el auditor</option>
+              <option value="Luis Angel Bolaño Castro">Luis Angel Bolaño Castro</option>
+              <option value="Maria Clara Pizarro">Maria Clara Pizarro</option>
+              <option value="Jennifer Melendez">Jennifer Melendez</option>
+              <option value="Daniel Rodriguez Galofre">Daniel Rodriguez Galofre</option>
+              <option value="Valentina Jimeno">Valentina Jimeno</option>
+            </select>
           </div>
         </div>
       </div>
@@ -743,11 +755,6 @@
         <button class="export-btn btn-pdf" id="export-pdf">
           <i class="fas fa-file-pdf"></i>
           Exportar a PDF
-        </button>
-        
-        <button class="export-btn btn-excel" id="export-excel">
-          <i class="fas fa-file-excel"></i>
-          Exportar a Excel
         </button>
         
         <button class="export-btn btn-save" id="save-audit">
@@ -987,6 +994,8 @@ function showNotification(message, type = 'success') {
 }
 
 // ==================== EXPORTACIÓN A PDF ====================
+// Considera usar jsPDF-AutoTable para las gráficas también
+// o asegúrate de que las gráficas estén completamente renderizadas antes de capturar.
 async function exportToPDF() {
   try {
     showNotification('Generando PDF', 'info');
@@ -1003,7 +1012,6 @@ async function exportToPDF() {
     const fecha = document.getElementById('fecha').value || 'No especificada';
     const sede = document.getElementById('sede').value || 'No especificada';
     const auditor = document.getElementById('auditor').value || 'No especificado';
-    const servicio = document.getElementById('servicio').value || 'No especificado';
     const { results, finalPct } = computeResults();
     
     function checkPageBreak(requiredSpace) {
@@ -1065,7 +1073,7 @@ async function exportToPDF() {
     yPos = 75;
     
     doc.setFillColor(248, 249, 250);
-    doc.rect(margin, yPos, contentWidth, 35, 'F');
+    doc.rect(margin, yPos, contentWidth, 30, 'F');
     
     doc.setTextColor(30, 60, 114);
     doc.setFontSize(9);
@@ -1081,16 +1089,11 @@ async function exportToPDF() {
     doc.text(sede, margin + 3, yPos + 24);
     
     doc.setFont('helvetica', 'bold');
-    doc.text('SERVICIO:', margin + 3, yPos + 27);
-    doc.setFont('helvetica', 'normal');
-    doc.text(servicio, margin + 3, yPos + 32);
-    
-    doc.setFont('helvetica', 'bold');
     doc.text('AUDITOR:', pageWidth / 2 + 5, yPos + 19);
     doc.setFont('helvetica', 'normal');
     doc.text(auditor, pageWidth / 2 + 5, yPos + 24);
     
-    yPos += 42;
+    yPos += 37;
     
     doc.setTextColor(30, 60, 114);
     doc.setFontSize(11);
@@ -1301,11 +1304,16 @@ async function exportToPDF() {
     doc.text('VISUALIZACIÓN DE RESULTADOS', pageWidth / 2, yPos, { align: 'center' });
     yPos += 10;
     
+    // Asegurar que las gráficas estén completamente renderizadas antes de capturar
     try {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const categoryCanvas = document.getElementById('categoryChart');
-      if (categoryCanvas) {
+      if (categoryCanvas && categoryChart) {
+        // Forzar actualización del gráfico antes de capturar
+        categoryChart.update('none');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         const tempCanvas = document.createElement('canvas');
         const scale = 5;
         tempCanvas.width = categoryCanvas.width * scale;
@@ -1339,7 +1347,11 @@ async function exportToPDF() {
       checkPageBreak(75);
       
       const distributionCanvas = document.getElementById('distributionChart');
-      if (distributionCanvas) {
+      if (distributionCanvas && distributionChart) {
+        // Forzar actualización del gráfico antes de capturar
+        distributionChart.update('none');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         const tempCanvas = document.createElement('canvas');
         const scale = 5;
         tempCanvas.width = distributionCanvas.width * scale;
@@ -1397,182 +1409,6 @@ async function exportToPDF() {
   }
 }
 
-// ==================== EXPORTACIÓN A EXCEL ====================
-async function exportToExcel() {
-  try {
-    showNotification('Generando archivo Excel...', 'info');
-    
-    const fecha = document.getElementById('fecha').value || 'No especificada';
-    const sede = document.getElementById('sede').value || 'No especificada';
-    const servicio = document.getElementById('servicio').value || 'No especificado';
-    const auditor = document.getElementById('auditor').value || 'No especificado';
-    
-    const { results, finalPct } = computeResults();
-    
-    let cCount = 0, cpCount = 0, ncCount = 0, naCount = 0;
-    
-    DATA.forEach(section => {
-      section.items.forEach((_, idx) => {
-        const radios = document.getElementsByName(makeId(section.name, idx));
-        let selectedValue = '';
-        for (const r of radios) {
-          if (r.checked) selectedValue = r.value;
-        }
-        
-        if (selectedValue === 'C') cCount++;
-        else if (selectedValue === 'CP') cpCount++;
-        else if (selectedValue === 'NC') ncCount++;
-        else if (selectedValue === 'NA') naCount++;
-      });
-    });
-    
-    const wb = XLSX.utils.book_new();
-    const allData = [];
-    
-    allData.push([{v: 'FUNDACIÓN OFTALMOLÓGICA DEL CARIBE', s: {font: {bold: true, sz: 18, color: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([{v: 'LISTA DE VERIFICACIÓN DE AUDITORÍA DE SERVICIO', s: {font: {bold: true, sz: 14, color: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([{v: 'Sistema de Evaluación y Control de Calidad', s: {font: {sz: 11, color: {rgb: "666666"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([]);
-    
-    allData.push(['Código: F-FSYM-823', '', 'Versión: 005', '', 'Vigencia: 2025-06-01']);
-    allData.push([]);
-    
-    allData.push([{v: 'INFORMACIÓN DE LA AUDITORÍA', s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: "E8F4F8"}}}}]);
-    allData.push(['Fecha de Auditoría:', fecha, '', 'Sede:', sede]);
-    allData.push(['Servicio:', servicio, '', 'Auditor:', auditor]);
-    allData.push([]);
-    
-    allData.push([{v: 'LISTA DE VERIFICACIÓN', s: {font: {bold: true, sz: 12, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([
-      {v: 'ASPECTOS A EVALUAR', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'C', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'CP', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'NC', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'N/A', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'OBSERVACIONES', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}
-    ]);
-    
-    DATA.forEach(section => {
-      allData.push([{v: section.name, s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "667EEA"}}, alignment: {horizontal: 'left'}}}]);
-      
-      section.items.forEach((item, idx) => {
-        const radios = document.getElementsByName(makeId(section.name, idx));
-        let selectedValue = '';
-        for (const r of radios) {
-          if (r.checked) selectedValue = r.value;
-        }
-        
-        const allRows = document.querySelectorAll('#tbody tr');
-        let observation = '';
-        for (const row of allRows) {
-          const firstCell = row.cells[0];
-          if (firstCell && firstCell.textContent === item) {
-            const obsInput = row.querySelector('.obs-input');
-            if (obsInput) observation = obsInput.value;
-            break;
-          }
-        }
-        
-        const rowData = [
-          item,
-          selectedValue === 'C' ? '✓' : '',
-          selectedValue === 'CP' ? '✓' : '',
-          selectedValue === 'NC' ? '✓' : '',
-          selectedValue === 'NA' ? '✓' : '',
-          observation
-        ];
-        
-        allData.push(rowData);
-      });
-      
-      const resultEl = document.getElementById('result-' + makeId(section.name, 0));
-      const resultPct = resultEl ? resultEl.textContent : '0%';
-      allData.push([{v: 'Resultado %', s: {font: {bold: true}, fill: {fgColor: {rgb: "E8F5E9"}}}}, '', '', '', '', {v: resultPct, s: {font: {bold: true, color: {rgb: "2E7D32"}}, alignment: {horizontal: 'right'}}}]);
-      allData.push([]);
-    });
-    
-    allData.push([]);
-    
-    allData.push([{v: 'META DE SEGURIDAD - RESULTADOS POR CRITERIO', s: {font: {bold: true, sz: 12, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([
-      {v: 'Criterio', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}}},
-      {v: 'Ponderación', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'Resultado %', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}},
-      {v: 'Estado de Cumplimiento', s: {font: {bold: true, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}
-    ]);
-    
-    results.forEach(result => {
-      allData.push([
-        result.name,
-        `${Math.round(result.weight * 100)}%`,
-        `${result.percentage}%`,
-        legendFor(result.percentage)
-      ]);
-    });
-    
-    allData.push([]);
-    allData.push([]);
-    
-    const status = legendFor(finalPct);
-    allData.push([{v: 'RESULTADO FINAL DE AUDITORÍA', s: {font: {bold: true, sz: 14, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: finalPct >= 80 ? "4CAF50" : finalPct >= 60 ? "FF9800" : "F44336"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([{v: `${finalPct}% - ${status.toUpperCase()}`, s: {font: {bold: true, sz: 18, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: finalPct >= 80 ? "4CAF50" : finalPct >= 60 ? "FF9800" : "F44336"}}, alignment: {horizontal: 'center'}}}]);
-    
-    allData.push([]);
-    allData.push([]);
-    
-    allData.push([{v: 'LEYENDA DE RESULTADOS', s: {font: {bold: true, sz: 11}, fill: {fgColor: {rgb: "F8F9FA"}}}}]);
-    allData.push(['100%', 'Cumplimiento total, no requiere acción']);
-    allData.push(['80% - 99%', 'Riesgo Bajo, requiere seguimiento']);
-    allData.push(['60% - 79%', 'Riesgo Medio, requiere plan de acción']);
-    allData.push(['0% - 59%', 'Riesgo Alto, intervención inmediata']);
-    
-    allData.push([]);
-    allData.push([]);
-    
-    allData.push([{v: 'ANÁLISIS ESTADÍSTICO', s: {font: {bold: true, sz: 12, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([]);
-    
-    const totalEvaluations = cCount + cpCount + ncCount + naCount;
-    allData.push(['Tipo de Evaluación', 'Cantidad', 'Porcentaje']);
-    if (totalEvaluations > 0) {
-      allData.push(['Cumplimiento (C)', cCount, `${Math.round((cCount / totalEvaluations) * 100)}%`]);
-      allData.push(['Cumplimiento Parcial (CP)', cpCount, `${Math.round((cpCount / totalEvaluations) * 100)}%`]);
-      allData.push(['No Cumple (NC)', ncCount, `${Math.round((ncCount / totalEvaluations) * 100)}%`]);
-      allData.push(['No Aplica (N/A)', naCount, `${Math.round((naCount / totalEvaluations) * 100)}%`]);
-    } else {
-      allData.push(['Cumplimiento (C)', 0, '0%']);
-      allData.push(['Cumplimiento Parcial (CP)', 0, '0%']);
-      allData.push(['No Cumple (NC)', 0, '0%']);
-      allData.push(['No Aplica (N/A)', 0, '0%']);
-    }
-    
-    const ws = XLSX.utils.aoa_to_sheet(allData);
-    
-    ws['!cols'] = [
-      { wch: 60 },
-      { wch: 5 },
-      { wch: 5 },
-      { wch: 5 },
-      { wch: 5 },
-      { wch: 40 }
-    ];
-    
-    ws['!rows'] = [];
-    ws['!rows'][0] = { hpt: 25 };
-    ws['!rows'][1] = { hpt: 20 };
-    
-    XLSX.utils.book_append_sheet(wb, ws, "Auditoría Completa");
-    
-    const fileName = `Auditoria_FOCA_${fecha.replace(/-/g, '')}_${sede.replace(/\s+/g, '_')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
-    
-    showNotification('Archivo Excel exportado exitosamente', 'success');
-  } catch (error) {
-    console.error('Error al exportar Excel:', error);
-    showNotification('Error al exportar Excel: ' + error.message, 'error');
-  }
-}
-
 // ==================== RESTABLECER FORMULARIO ====================
 function resetForm() {
   if (!confirm('¿Estás seguro de que deseas restablecer el formulario? Se perderán todos los datos ingresados.')) {
@@ -1584,7 +1420,6 @@ function resetForm() {
     
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
     document.getElementById('sede').value = '';
-    document.getElementById('servicio').value = '';
     document.getElementById('auditor').value = '';
     
     const allRadios = document.querySelectorAll('input[type="radio"]');
@@ -1618,10 +1453,9 @@ async function guardarAuditoria() {
     const fecha = document.getElementById("fecha").value;
     const sede = document.getElementById("sede").value;
     const auditor = document.getElementById("auditor").value;
-    const servicio = document.getElementById("servicio").value;
     
     if (!fecha || !sede || !auditor) {
-      showNotification("Por favor complete los campos: Fecha, Sede y Auditor", "error");
+      showNotification("Por favor complete todos los campos: Fecha, Sede y Auditor", "error");
       return;
     }
     
@@ -1660,7 +1494,6 @@ async function guardarAuditoria() {
       id: auditID,
       fecha: fecha,
       sede: sede,
-      servicio: servicio || "No especificado",
       auditor: auditor,
       porcentaje_final: resultado.finalPct,
       estado: legendFor(resultado.finalPct),
@@ -1679,17 +1512,17 @@ async function guardarAuditoria() {
       body: JSON.stringify(payload)
     });
     
-    showNotification(`✅ Auditoría guardada exitosamente - ID: ${auditID}`, "success");
+    showNotification(`âœ… AuditorÃ­a guardada exitosamente - ID: ${auditID}`, "success");
     
-    console.log("Auditoría enviada con ID:", payload.id);
+    console.log("AuditorÃ­a enviada con ID:", payload.id);
     
   } catch (error) {
     console.error("Error detallado al guardar:", error);
-    showNotification("❌ Error al guardar: " + error.message, "error");
+    showNotification("âŒ Error al guardar: " + error.message, "error");
   }
 }
 
-// ==================== GRÁFICOS ====================
+// ==================== GRÃFICOS ====================
 function initializeCharts() {
   const ctx1 = document.getElementById('categoryChart').getContext('2d');
   const ctx2 = document.getElementById('distributionChart').getContext('2d');
@@ -1920,7 +1753,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('fecha').value = today;
   
   document.getElementById('export-pdf').addEventListener('click', exportToPDF);
-  document.getElementById('export-excel').addEventListener('click', exportToExcel);
   document.getElementById('save-audit').addEventListener('click', guardarAuditoria);
   document.getElementById('reset-form').addEventListener('click', resetForm);
   
