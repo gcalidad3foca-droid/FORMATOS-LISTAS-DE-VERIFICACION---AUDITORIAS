@@ -1266,9 +1266,9 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'normal');
     
     const legendItems = [
-      { color: [76, 175, 80], text: 'Mayor o igual a 90% - Riesgo Bajo. Cumple' },
-      { color: [255, 152, 0], text: 'Mayor o igual a 85% - Riesgo Medio. Cumple parcialmente' },
-      { color: [244, 67, 54], text: 'Menor de 85% - Riesgo Alto. Intervencion inmediata' }
+      { color: [76, 175, 80], text: 'Mayor o igual a 90% - Riesgo Bajo. Genéra seguimiento.  No genera plan de acción' },
+      { color: [255, 152, 0], text: 'Mayor o igual a 85% - Riesgo Medio. Cumple parcialmente con los criterios evaluados y se requiere plan de acción y seguimiento' },
+      { color: [244, 67, 54], text: 'Menor de 85% - Riesgo Alto. Se requiere acciones de intervención inmediata y plan de mejoramiento a corto plazo ' }
     ];
     
     legendItems.forEach((item, index) => {
