@@ -617,11 +617,11 @@
             </div>
             <div class="header-item">
               <div class="header-label">Versión</div>
-              <div class="header-value">005</div>
+              <div class="header-value">006</div>
             </div>
             <div class="header-item">
               <div class="header-label">Vigencia</div>
-              <div class="header-value">2025-06-01</div>
+              <div class="header-value">2025-19-01</div>
             </div>
           </div>
         </div>
@@ -658,12 +658,10 @@
             <label>Auditor</label>
             <select id="auditor">
               <option value="">Seleccione el auditor</option>
-              <option value="Luis Angel Bolaño Castro">Luis Angel Bolaño</option>
+              <option value="Luis Angel Bolaño Castro">Luis Angel Bolaño Castro</option>
               <option value="Maria Clara Pizarro">Maria Clara Pizarro</option>
-              <option value="Daniel Rodriguez Galofre">Daniel Rodriguez</option>
+              <option value="Daniel Rodriguez Galofre">Daniel Rodriguez Galofre</option>
               <option value="Valentina Jimeno">Valentina Jimeno</option>
-              <option value="Jennifer Melendez">Jennifer Melendez</option>
-
             </select>
           </div>
         </div>
@@ -711,7 +709,7 @@
           <div class="legend-box">
             <div class="legend-item">
               <div class="legend-dot" style="background: #4caf50;"></div>
-              <div class="legend-text"><strong>Mayor o igual a 90%</strong> – Riesgo Bajo. Cumple. Genera seguimiento. No genera plan de acción</div>
+              <div class="legend-text"><strong>Mayor o igual a 92%</strong> – Riesgo Bajo. Cumple. Genera seguimiento. No genera plan de acción</div>
             </div>
             <div class="legend-item">
               <div class="legend-dot" style="background: #ff9800;"></div>
@@ -792,12 +790,13 @@ const DATA = [
   {
     "name": "PRESTACIÓN DEL SERVICIO",
     "weight": 0.2,
-    "items": [
+    "items": [  
+      "El personal de orientacion en el Smart Queue brinda informacion clara y   completa, realiza educacion sobre el uso de la herramienta y asigna el turno correspondiente al servicio requerido y mantiene trato respetuoso al usuario",
       "Verificar saludo y presentación por parte del equipo médico",
       "Verificar educación al paciente y/o cuidador sobre riesgos y beneficios de la dilatación ocular",
       "Verificar si el tiempo de atención está en el estándar establecido. Oftalmología (Max 20min - Min 10) Optometría (Max 10Min- 5Min)",
-      "Verificar entrega y comprensión del profesional en cuanto a diagnóstico, plan de tratamiento, prescripción médica, remisiones, órdenes de estudios diagnósticos y cirugía si tuviera lugar",
-      "Verificar entrega efectiva de copias impresas del ordenamiento médico, incluye recomendaciones universales"
+      "Verificar que el profesional de salud entregue y explique de manera clara al paciente el diagnóstico, el plan de tratamiento, la prescripción médica, las remisiones, las órdenes de estudios diagnósticos y, cuando aplique, la indicación de cirugía, asegurando su comprensión",
+      "Verificar entrega efectiva de copias impresas del ordenamiento medico, incluye recomendaciones universales que incluya: verificacion de la correcta identificación del paciente y el tiempo de entrega de orden (10min - 15max)"
     ]
   },
   {
@@ -947,7 +946,7 @@ function computeResults() {
   document.getElementById('final-status').textContent = legendFor(finalPct);
   
   const finalScore = document.querySelector('.final-score');
-  if (finalPct >= 90) {
+  if (finalPct >= 92) {
     finalScore.style.background = 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)';
   } else if (finalPct >= 85) {
     finalScore.style.background = 'linear-gradient(135deg, #ff9800 0%, #ffa726 100%)';
@@ -961,7 +960,7 @@ function computeResults() {
 }
 
 function legendFor(pct) {
-  if (pct >= 90) return 'Riesgo Bajo';
+  if (pct >= 92) return 'Riesgo Bajo';
   if (pct >= 85) return 'Riesgo Medio';
   return 'Riesgo Alto';
 }
@@ -1054,12 +1053,12 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'bold');
     doc.text('Versión: ', pageWidth / 2 - 10, 56);
     doc.setFont('helvetica', 'normal');
-    doc.text('005', pageWidth / 2 + 5, 56);
+    doc.text('006', pageWidth / 2 + 5, 56);
     
     doc.setFont('helvetica', 'bold');
     doc.text('Vigencia: ', pageWidth - 45, 56);
     doc.setFont('helvetica', 'normal');
-    doc.text('2025-06-01', pageWidth - 25, 56);
+    doc.text('2025-19-01', pageWidth - 25, 56);
     
     yPos = 75;
     
@@ -1235,7 +1234,7 @@ async function exportToPDF() {
     
     const status = legendFor(finalPct);
     let bgColor;
-    if (finalPct >= 90) bgColor = [76, 175, 80];
+    if (finalPct >= 92) bgColor = [76, 175, 80];
     else if (finalPct >= 85) bgColor = [255, 152, 0];
     else bgColor = [244, 67, 54];
     
@@ -1268,9 +1267,9 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'normal');
     
     const legendItems = [
-      { color: [76, 175, 80], text: 'Mayor o igual a 90% - Riesgo Bajo. Genéra seguimiento.  No genera plan de acción' },
-      { color: [255, 152, 0], text: 'Mayor o igual a 85% - Riesgo Medio. Cumple parcialmente con los criterios evaluados y se requiere plan de acción y seguimiento' },
-      { color: [244, 67, 54], text: 'Menor de 85% - Riesgo Alto. Se requiere acciones de intervención inmediata y plan de mejoramiento a corto plazo ' }
+      { color: [76, 175, 80], text: 'Mayor o igual a 92% - Riesgo Bajo. Cumple' },
+      { color: [255, 152, 0], text: 'Mayor o igual a 85% - Riesgo Medio. Cumple parcialmente' },
+      { color: [244, 67, 54], text: 'Menor de 85% - Riesgo Alto. Intervencion inmediata' }
     ];
     
     legendItems.forEach((item, index) => {
@@ -1609,16 +1608,16 @@ const categoryColors = [
       datasets: [{
         data: [0, 0, 0, 0],
         backgroundColor: [
-          'rgba(33, 150, 243, 0.9)',
-          'rgba(66, 165, 245, 0.9)',
-          'rgba(100, 181, 246, 0.9)',
-          'rgba(144, 202, 249, 0.9)'
+          'rgba(46, 125, 50, 0.85)',      // Verde oscuro elegante para C
+          'rgba(251, 192, 45, 0.85)',     // Amarillo dorado para CP
+          'rgba(211, 47, 47, 0.85)',      // Rojo elegante para NC
+          'rgba(66, 133, 244, 0.85)'      // Azul profesional para N/A
         ],
         borderColor: [
-          'rgba(33, 150, 243, 1)',
-          'rgba(66, 165, 245, 1)',
-          'rgba(100, 181, 246, 1)',
-          'rgba(144, 202, 249, 1)'
+          'rgba(46, 125, 50, 1)',         // Verde oscuro
+          'rgba(251, 192, 45, 1)',        // Amarillo dorado
+          'rgba(211, 47, 47, 1)',         // Rojo elegante
+          'rgba(66, 133, 244, 1)'         // Azul profesional
         ],
         borderWidth: 2
       }]
@@ -1753,6 +1752,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
-
-
